@@ -2,8 +2,8 @@
 """agent-receipt-verify: verify a hash-chained agent action receipt log.
 
 Agents that act on the world should leave receipts: one JSON object per
-action, chained by hash so later edits, deletions and insertions show up as
-breaks. This tool verifies such a log offline - chain continuity, receipt
+action, chained by hash so later edits and mid-log deletions or insertions
+show up as breaks. This tool verifies such a log offline - chain continuity, receipt
 hash correctness, sequence integrity, timestamp order - and reports exactly
 where the evidence stops holding.
 
@@ -139,8 +139,8 @@ def verify_lines(lines: list[str],
             findings.append(Finding("error", "chain-break",
                                     f"{where} (seq {seq}) prev_hash does not "
                                     "match the previous receipt_hash; the log "
-                                    "was spliced, truncated mid-stream, or "
-                                    "reordered"))
+                                    "was spliced, had non-final receipts "
+                                    "deleted, or was reordered"))
 
         # hash correctness (tamper evidence)
         if "receipt_hash" not in receipt:
