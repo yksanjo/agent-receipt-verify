@@ -58,7 +58,7 @@ produced the log.
 |------|----------|-----------------|
 | `malformed-line` / `missing-field` / `invalid-seq` / `invalid-ts` | error | unreadable or incomplete receipts |
 | `hash-mismatch` | error | receipt contents edited after emission |
-| `chain-break` | error | `prev_hash` does not match the previous `receipt_hash` (splice, deletion, reorder, mid-stream truncation) |
+| `chain-break` | error | `prev_hash` does not match the previous `receipt_hash` (splice, mid-log deletion, reorder) |
 | `seq-regression` | error | sequence goes backwards or repeats |
 | `seq-gap` | warning | sequence jumps - filtered export, or dropped receipts |
 | `ts-backstep` | warning | timestamp earlier than the previous receipt beyond `--skew-seconds` |
@@ -74,6 +74,10 @@ produced the log.
   fresh chain from scratch. This detects *after-the-fact edits to an
   existing* chain, not a wholesale replacement with a newly minted one;
   anchoring (publishing a head hash elsewhere) is the emitter's job.
+- **Tail truncation is invisible without anchoring.** Dropping the last N
+  receipts leaves a perfectly valid shorter chain. Catching it requires an
+  externally anchored expected head hash or receipt count, which this tool
+  does not have.
 - **Does not execute or replay actions.** Payload hashes are checked for
   presence and chain math, never recomputed from real payloads.
 - **Heuristics, not proof.** A clean result means no detectable tampering
